@@ -1,0 +1,72 @@
+import pygame
+import sys
+import numpy as np
+import wave
+import numpy as np
+import wave
+
+def generate_sine_wave(filename, frequency, duration, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+    y = 0.5 * np.sin(2 * np.pi * frequency * t)
+    y = (y * 32767).astype(np.int16)  # 转换为 PCM 16 位格式
+
+    with wave.open(filename, 'w') as wf:
+        wf.setnchannels(1)  # 单声道
+        wf.setsampwidth(2)  # 2 字节
+        wf.setframerate(sample_rate)
+        wf.writeframes(y.tobytes())
+
+generate_sine_wave("sound1.wav", 440, 2)  # A4
+generate_sine_wave("sound2.wav", 554.37, 2)  # C#5
+generate_sine_wave("sound3.wav", 659.25, 2)  # E5
+
+print("声音文件生成完成！")
+
+def generate_sine_wave(filename, frequency, duration, sample_rate=44100):
+    t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
+    y = 0.5 * np.sin(2 * np.pi * frequency * t)
+    y = (y * 32767).astype(np.int16)  # 转换为 PCM 16 位格式
+
+    with wave.open(filename, 'w') as wf:
+        wf.setnchannels(1)  # 单声道
+        wf.setsampwidth(2)  # 2 字节
+        wf.setframerate(sample_rate)
+
+pygame.init()
+
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("点击播放声音")
+
+sounds = {
+    "sound1": pygame.mixer.Sound("sound1.wav"),
+    "sound2": pygame.mixer.Sound("sound2.wav"),
+    "sound3": pygame.mixer.Sound("sound3.wav"),
+}
+
+regions = [
+    {"rect": pygame.Rect(0, 0, screen_width // 3, screen_height), "sound": sounds["sound1"]},
+    {"rect": pygame.Rect(screen_width // 3, 0, screen_width // 3, screen_height), "sound": sounds["sound2"]},
+    {"rect": pygame.Rect(2 * screen_width // 3, 0, screen_width // 3, screen_height), "sound": sounds["sound3"]},
+]
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:  # 左键点击
+                mouse_pos = event.pos
+                for region in regions:
+                    if region["rect"].collidepoint(mouse_pos):
+                        region["sound"].play()
+
+    screen.fill((255, 255, 255))
+
+    for region in regions:
+        pygame.draw.rect(screen, (200, 200, 200), region["rect"])
+
+    pygame.display.flip()
+
