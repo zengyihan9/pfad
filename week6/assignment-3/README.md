@@ -1,0 +1,2 @@
+##introduction
+The control panel background is a rainbow gradient. Moving the mouse creates a trailing effect. Clicking on the control panel will produce stars, and each click will generate different sounds.
